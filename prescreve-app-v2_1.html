@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>prescreve. — App Completo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sage: #4a7c6f;
+  --sage-light: #6a9e8f;
+  --sage-pale: #e8f2ef;
+  --sage-dark: #2d5a50;
+  --dark: #0e1a16;
+  --cream: #faf8f4;
+  --white: #ffffff;
+  --charcoal: #1a1a1a;
+  --mid: #5a5a5a;
+  --light: #9a9a9a;
+  --border: #e8e4df;
+  --accent: #c17f3e;
+  --accent-light: #f5e8d6;
+  --red: #e05555;
+  --red-light: #fdeaea;
+  --blue: #4a7ab5;
+  --blue-light: #e8f0f9;
+  --green: #2d7a47;
+  --green-light: #d4edda;
+  --warn: #d4820a;
+  --warn-light: #fef3dc;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 100px;
+}
+
+/* TOP BAR */
+.topbar {
+  width: 100%;
+  max-width: 1020px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+.logo span { color: var(--accent); }
+
+.v2-badge {
+  background: linear-gradient(135deg, var(--sage) 0%, var(--sage-light) 100%);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 100px;
+  letter-spacing: 1px;
+}
+
+/* SECTION TOGGLE */
+.section-toggle {
+  display: flex;
+  gap: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 4px;
+}
+
+.toggle-btn {
+  padding: 7px 18px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.toggle-btn.active { background: var(--sage); color: white; }
+
+/* PROGRESS */
+.progress-wrap {
+  width: 100%;
+  max-width: 1020px;
+  margin-bottom: 24px;
+}
+
+.steps {
+  display: flex;
+  position: relative;
+}
+
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  right: 13px;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  z-index: 0;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.step-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  transition: all 0.2s;
+}
+
+.step.active .step-dot { background: var(--sage); border-color: var(--sage); color: white; }
+.step.done .step-dot { background: rgba(74,124,111,0.2); border-color: var(--sage); color: var(--sage-light); }
+
+.step-label {
+  font-size: 8px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.2);
+  text-align: center;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.step.active .step-label, .step.done .step-label { color: var(--sage-light); }
+
+/* SCREEN */
+.screen-wrap { width: 100%; max-width: 1020px; }
+.screen { display: none; }
+.screen.active { display: flex; gap: 44px; align-items: flex-start; justify-content: center; }
+
+/* PHONE — App Native Style */
+.phone {
+  width: 300px;
+  min-height: 600px;
+  background: var(--charcoal);
+  border-radius: 44px;
+  border: 8px solid #0a0a0a;
+  box-shadow: 0 32px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.phone-notch {
+  width: 100px;
+  height: 26px;
+  background: #0a0a0a;
+  border-radius: 0 0 18px 18px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.notch-camera { width: 8px; height: 8px; background: #1a1a1a; border-radius: 50%; border: 1.5px solid #222; }
+
+.phone-scroll {
+  padding: 14px 18px 28px;
+  overflow-y: auto;
+  max-height: 570px;
+}
+
+/* Info panel */
+.info-panel { max-width: 240px; flex-shrink: 0; }
+
+.screen-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--sage-light);
+  margin-bottom: 10px;
+}
+
+.screen-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.screen-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.feat-list { list-style: none; }
+.feat-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  line-height: 1.5;
+}
+.feat-item:last-child { border-bottom: none; }
+.feat-check {
+  width: 15px; height: 15px;
+  background: rgba(74,124,111,0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px;
+  color: var(--sage-light);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(14,26,22,0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 100px;
+  padding: 10px 18px;
+  z-index: 100;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  font-family: 'DM Sans', sans-serif;
+  transition: color 0.2s;
+}
+.nav-btn:hover { color: white; }
+
+.nav-dots { display: flex; gap: 5px; }
+.ndot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; transition: all 0.2s; }
+.ndot.active { background: var(--sage-light); width: 18px; border-radius: 3px; }
+
+.nav-count { font-size: 11px; color: rgba(255,255,255,0.2); min-width: 30px; text-align: center; }
+
+/* ===== PHONE DARK COMPONENTS ===== */
+.ph-status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0 8px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+}
+
+.ph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ph-logo { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: white; }
+.ph-logo span { color: var(--accent); }
+
+.ph-back { font-size: 18px; color: rgba(255,255,255,0.5); }
+
+.ph-avatar {
+  width: 30px; height: 30px;
+  background: var(--sage-pale);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+
+.ph-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.ph-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 14px; }
+
+.section-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 8px;
+}
+
+/* SPLASH */
+.splash {
+  background: var(--sage-dark);
+  margin: -14px -18px;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.splash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 60%, rgba(106,158,143,0.3) 0%, transparent 70%);
+}
+
+.splash-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 52px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -2px;
+  position: relative;
+  z-index: 2;
+}
+.splash-logo span { color: var(--accent); }
+.splash-sub { font-size: 12px; color: rgba(255,255,255,0.5); position: relative; z-index: 2; margin-top: 4px; }
+
+/* ONBOARDING */
+.onboard-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.onboard-dot { height: 3px; flex: 1; background: rgba(255,255,255,0.1); border-radius: 2px; }
+.onboard-dot.active { background: var(--sage-light); }
+
+.ph-card {
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.ph-card-name { font-size: 13px; font-weight: 600; color: white; margin-bottom: 2px; }
+.ph-card-detail { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+.ph-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: white;
+}
+.ph-input.active { border-color: var(--sage-light); }
+.ph-input::placeholder { color: rgba(255,255,255,0.2); }
+
+.input-group { margin-bottom: 10px; }
+.input-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
+
+.ph-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: 8px;
+}
+.ph-btn-primary { background: var(--sage); color: white; }
+.ph-btn-secondary { background: rgba(74,124,111,0.2); color: var(--sage-light); border: 1px solid rgba(74,124,111,0.3); }
+.ph-btn-ghost { background: transparent; color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.08); }
+.ph-btn-accent { background: var(--accent); color: white; }
+
+.ph-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 12px 0; }
+
+/* STATS */
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+
+.stat-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--sage-light);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.stat-label { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* BADGES */
+.badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+  letter-spacing: 0.3px;
+}
+.badge-green { background: rgba(45,122,71,0.2); color: #5dc98a; }
+.badge-orange { background: rgba(193,127,62,0.2); color: var(--accent); }
+.badge-blue { background: rgba(74,122,181,0.2); color: #7aaee8; }
+.badge-warn { background: rgba(212,130,10,0.2); color: #f5a623; }
+.badge-sage { background: rgba(74,124,111,0.2); color: var(--sage-light); }
+.badge-red { background: rgba(224,85,85,0.15); color: #ff8080; }
+
+/* HISTORY ITEM */
+.hist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.hist-item:last-child { border-bottom: none; }
+.hist-icon { width: 34px; height: 34px; background: rgba(74,124,111,0.15); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.hist-name { font-size: 12px; font-weight: 600; color: white; margin-bottom: 2px; }
+.hist-detail { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* AUTOCOMPLETE */
+.ac-wrap { position: relative; margin-bottom: 10px; }
+.ac-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid var(--sage);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--sage-light);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.ac-dropdown {
+  background: #1a2920;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  margin-top: 4px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+.ac-item {
+  padding: 9px 12px;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item.sel { background: rgba(74,124,111,0.15); }
+.ac-name { font-weight: 600; color: var(--sage-light); margin-bottom: 1px; }
+.ac-detail { color: rgba(255,255,255,0.3); font-size: 10px; }
+
+/* PRODUCT SELECTED */
+.product-sel {
+  background: rgba(74,124,111,0.15);
+  border: 1.5px solid var(--sage);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.product-sel-name { font-size: 12px; font-weight: 600; color: var(--sage-light); margin-bottom: 1px; }
+.product-sel-detail { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* OPTION CARDS */
+.option-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1.5px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.option-card.rec { border-color: var(--sage); background: rgba(74,124,111,0.1); }
+.option-img { width: 40px; height: 40px; background: rgba(255,255,255,0.06); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.option-name { font-size: 11px; font-weight: 600; color: white; margin-bottom: 1px; }
+.option-brand { font-size: 10px; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
+.option-price { font-size: 13px; font-weight: 700; color: var(--sage-light); }
+
+/* PROGRESS BAR */
+.pb-label { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.3); margin-bottom: 5px; }
+.pb-track { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.pb-fill { height: 100%; background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%); border-radius: 3px; }
+
+/* SCAN SCREEN */
+.scan-area {
+  background: #000;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(74,124,111,0.5);
+}
+
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(transparent 30%, rgba(0,0,0,0.5) 30%),
+    linear-gradient(rgba(0,0,0,0.5) 70%, transparent 70%);
+}
+
+.scan-frame {
+  width: 160px;
+  height: 120px;
+  position: relative;
+  z-index: 2;
+}
+
+.scan-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: var(--sage-light);
+  border-style: solid;
+}
+.sc-tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+.sc-tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+.sc-bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+.sc-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--sage-light);
+  top: 40%;
+  z-index: 3;
+  box-shadow: 0 0 8px var(--sage-light);
+}
+
+/* NOTIFICATION */
+.notif-banner {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(10px);
+}
+.notif-icon { font-size: 18px; flex-shrink: 0; }
+.notif-app { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; margin-bottom: 2px; }
+.notif-text { font-size: 11px; color: white; line-height: 1.4; }
+.notif-time { font-size: 9px; color: rgba(255,255,255,0.3); margin-left: auto; flex-shrink: 0; }
+
+/* WHY */
+.why-option {
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.why-option.sel { border-color: var(--sage); background: rgba(74,124,111,0.1); }
+.why-icon { font-size: 18px; }
+.why-text { font-size: 12px; font-weight: 500; color: white; }
+.why-sub { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* REORDER BANNER */
+.reorder-banner {
+  background: linear-gradient(135deg, var(--sage-dark) 0%, var(--sage) 100%);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.reorder-title { font-size: 13px; font-weight: 700; color: white; margin-bottom: 3px; }
+.reorder-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px; line-height: 1.4; }
+.reorder-btn { background: white; color: var(--sage); padding: 7px 14px; border-radius: 100px; font-size: 11px; font-weight: 700; display: inline-block; }
+
+/* CONFIRM ROW */
+.confirm-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 11px; }
+.cr-label { color: rgba(255,255,255,0.3); }
+.cr-value { color: white; font-weight: 500; text-align: right; max-width: 55%; }
+
+/* ANALYTICS */
+.anal-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* TAG */
+.tag { display: inline-block; font-size: 9px; padding: 3px 8px; border-radius: 100px; font-weight: 600; margin-right: 4px; }
+.tag-sage { background: rgba(74,124,111,0.2); color: var(--sage-light); }
+.tag-accent { background: rgba(193,127,62,0.15); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">prescreve<span>.</span></div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <span class="v2-badge">APP · VERSÃO 2</span>
+    <div class="section-toggle" id="sectionToggle">
+      <button class="toggle-btn active" onclick="setSection('onboard')">Onboarding</button>
+      <button class="toggle-btn" onclick="setSection('medico')">Médico</button>
+      <button class="toggle-btn" onclick="setSection('paciente')">Paciente</button>
+    </div>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="steps" id="stepsEl"></div>
+</div>
+
+<div class="screen-wrap" id="screenWrap"></div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="prev()">←</button>
+  <div class="nav-dots" id="navDots"></div>
+  <span class="nav-count" id="navCount">1/16</span>
+  <button class="nav-btn" onclick="next()">→</button>
+</div>
+
+<script>
+const allScreens = {
+  onboard: [
+    {
+      tag: 'ONBOARDING · TELA 1',
+      title: 'Splash screen',
+      desc: 'Primeira tela ao abrir o app. Marca forte, posicionamento claro.',
+      feats: ['Animação de entrada suave','Logo centralizado','Carregamento de dados em background','Detecta se é primeira vez ou usuário existente'],
+      render: () => `
+        <div class="splash">
+          <div class="splash-logo">prescreve<span>.</span></div>
+          <div class="splash-sub">do consultório ao tratamento</div>
+        </div>`
+    },
+    {
+      tag: 'ONBOARDING · TELA 2',
+      title: 'Quem é você?',
+      desc: 'O app serve médicos e pacientes. A escolha define o fluxo de cadastro.',
+      feats: ['Dois fluxos completamente diferentes','Interface adapta ao perfil escolhido','Sem campos desnecessários','Rápido e direto'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div style="display:flex;gap:4px;margin-bottom:20px;">
+            <div class="onboard-dot active"></div><div class="onboard-dot"></div><div class="onboard-dot"></div>
+          </div>
+          <div class="ph-title" style="margin-bottom:4px;">Você é médico ou<br>paciente?</div>
+          <div class="ph-sub" style="margin-bottom:20px;">Isso define sua experiência no app</div>
+          <div class="ph-card" style="border:1.5px solid var(--sage);background:rgba(74,124,111,0.15);margin-bottom:10px;">
+            <div style="font-size:24px;margin-bottom:8px;">👩‍⚕️</div>
+            <div class="ph-card-name">Sou médico</div>
+            <div class="ph-card-detail">Quero enviar recomendações e acompanhar meus pacientes</div>
+          </div>
+          <div class="ph-card" style="margin-bottom:20px;">
+            <div style="font-size:24px;margin-bottom:8px;">🙋</div>
+            <div class="ph-card-name">Sou paciente</div>
+            <div class="ph-card-detail">Quero ver minhas recomendações e acompanhar meu tratamento</div>
+          </div>
+          <button class="ph-btn ph-btn-primary">Continuar como Médico</button>
+        </div>`
+    },
+    {
+      tag: 'ONBOARDING · TELA 3',
+      title: 'Cadastro do médico',
+      desc: 'Simples e rápido. Sem certificado digital, sem burocracia. Em 2 minutos o médico está pronto.',
+      feats: ['Nome, CRM e especialidade','Verificação de CRM automática','Sem documentos ou certificados','Acesso imediato após cadastro'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div style="display:flex;gap:4px;margin-bottom:20px;">
+            <div class="onboard-dot active"></div><div class="onboard-dot active"></div><div class="onboard-dot"></div>
+          </div>
+          <div class="ph-title" style="margin-bottom:4px;">Criar conta</div>
+          <div class="ph-sub" style="margin-bottom:16px;">Leva menos de 2 minutos</div>
+          <div class="input-group"><div class="input-label">Nome completo</div><div class="ph-input active">Dra. Camila Souza</div></div>
+          <div class="input-group"><div class="input-label">CRM</div><div class="ph-input">SP-123456</div></div>
+          <div class="input-group"><div class="input-label">Especialidade</div>
+            <div class="ac-dropdown" style="margin-top:0;">
+              <div class="ac-item sel"><div class="ac-name">Dermatologia</div></div>
+              <div class="ac-item"><div class="ac-name">Nutrologia</div></div>
+              <div class="ac-item"><div class="ac-name">Endocrinologia</div></div>
+              <div class="ac-item"><div class="ac-name">Clínica Geral</div></div>
+            </div>
+          </div>
+          <div class="input-group"><div class="input-label">WhatsApp</div><div class="ph-input">(11) 99999-0000</div></div>
+          <button class="ph-btn ph-btn-primary" style="margin-top:4px;">Criar conta →</button>
+        </div>`
+    },
+    {
+      tag: 'ONBOARDING · TELA 4',
+      title: 'Tour do app',
+      desc: 'Introdução rápida às 3 principais funcionalidades. O médico entende em 30 segundos o que pode fazer.',
+      feats: ['3 telas de tour máximo','Skip disponível','Animações que mostram o fluxo real','CTA direto para começar'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div style="display:flex;gap:4px;margin-bottom:24px;">
+            <div class="onboard-dot active"></div><div class="onboard-dot active"></div><div class="onboard-dot active"></div>
+          </div>
+          <div style="background:rgba(74,124,111,0.1);border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;border:1px solid rgba(74,124,111,0.2);">
+            <div style="font-size:40px;margin-bottom:12px;">⚡</div>
+            <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;margin-bottom:6px;">30 segundos por recomendação</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6;">Digite 3 letras, o app completa. Paciente recebe na hora no WhatsApp.</div>
+          </div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="font-size:20px;">📱</span><div><div class="ph-card-name">Paciente recebe no WhatsApp</div><div class="ph-card-detail">Sem precisar baixar nenhum app</div></div>
+          </div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <span style="font-size:20px;">🔄</span><div><div class="ph-card-name">Recompra automática</div><div class="ph-card-detail">Sistema lembra o paciente na hora certa</div></div>
+          </div>
+          <button class="ph-btn ph-btn-primary">Começar agora →</button>
+          <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Pular tour</div>
+        </div>`
+    }
+  ],
+  medico: [
+    {
+      tag: 'MÉDICO · TELA 1',
+      title: 'Home com dashboard completo',
+      desc: 'Visão completa do desempenho. Taxa de conversão, aderência e recompras em tempo real.',
+      feats: ['Stats do mês em destaque','Status de todos os pacientes','Alertas de não iniciaram','Ação rápida: nova recomendação'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-logo">prescreve<span>.</span></div><div class="ph-avatar">👩‍⚕️</div></div>
+          <div class="ph-title">Boa tarde,<br>Dra. Camila 👋</div>
+          <div class="ph-sub">Janeiro 2025</div>
+          <div class="stat-row">
+            <div class="stat-card"><div class="stat-num">47</div><div class="stat-label">Recomendações</div></div>
+            <div class="stat-card"><div class="stat-num">68%</div><div class="stat-label">Conversão</div></div>
+          </div>
+          <div class="stat-row" style="margin-bottom:16px;">
+            <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Em recompra</div></div>
+            <div class="stat-card"><div class="stat-num" style="color:#f5a623;">8</div><div class="stat-label">Não iniciaram ⚠️</div></div>
+          </div>
+          <button class="ph-btn ph-btn-primary" style="margin-bottom:14px;">+ Nova Recomendação</button>
+          <div class="section-label">Recentes</div>
+          <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Maria Oliveira</div><div class="hist-detail">Minoxidil 5% · hoje</div></div><span class="badge badge-warn">Não iniciou</span></div>
+          <div class="hist-item"><div class="hist-icon">🧴</div><div style="flex:1;"><div class="hist-name">Ana Paula Lima</div><div class="hist-detail">Vitamina C · Dia 18/60</div></div><span class="badge badge-green">Ativo ✓</span></div>
+          <div class="hist-item"><div class="hist-icon">☀️</div><div style="flex:1;"><div class="hist-name">Fernanda Reis</div><div class="hist-detail">FPS 70 · Recompra →</div></div><span class="badge badge-blue">Recompra</span></div>
+        </div>`
+    },
+    {
+      tag: 'MÉDICO · TELA 2',
+      title: 'Nova recomendação — autofill completo',
+      desc: 'Paciente e produto em uma única tela. Autofill nos dois campos. Todo o processo em 30 segundos.',
+      feats: ['Autofill de paciente salvo','Autofill de produto com marca e dosagem','Favoritos do médico destacados','Frequência e duração em campos rápidos'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Nova Recomendação</div><div style="width:20px;"></div></div>
+          <div class="input-group">
+            <div class="input-label">Paciente</div>
+            <div class="ac-input">👤 Mari...</div>
+            <div class="ac-dropdown" style="margin-top:4px;">
+              <div class="ac-item sel"><div class="ac-name">Maria Oliveira</div><div class="ac-detail">(11) 99999-1234 · 10 jan</div></div>
+              <div class="ac-item"><div class="ac-name">Marina Costa</div><div class="ac-detail">(11) 98888-5678 · 5 jan</div></div>
+              <div class="ac-item" style="font-size:10px;color:rgba(255,255,255,0.25);font-style:italic;">+ Novo paciente</div>
+            </div>
+          </div>
+          <div class="input-group" style="margin-top:4px;">
+            <div class="input-label">Produto</div>
+            <div class="ac-input">🔍 mino...</div>
+            <div class="ac-dropdown" style="margin-top:4px;">
+              <div class="ac-item sel"><div class="ac-name">Minoxidil 5% — Kirkland 60ml</div><div class="ac-detail">Uso tópico · ★ Favorito</div></div>
+              <div class="ac-item"><div class="ac-name">Minoxidil 5% — Regaine 60ml</div><div class="ac-detail">Uso tópico</div></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+            <div class="input-group"><div class="input-label">Frequência</div><div class="ph-input active">2x ao dia</div></div>
+            <div class="input-group"><div class="input-label">Duração</div><div class="ph-input active">3 meses</div></div>
+          </div>
+          <div class="input-group"><div class="input-label">Observação</div><div class="ph-input" style="color:rgba(255,255,255,0.3);">Evitar molhar por 4h...</div></div>
+          <button class="ph-btn ph-btn-primary">Revisar e Enviar →</button>
+        </div>`
+    },
+    {
+      tag: 'MÉDICO · TELA 3',
+      title: 'Confirmação e envio',
+      desc: 'Resumo completo antes de enviar. Médico revisa tudo e confirma com 1 clique. WhatsApp disparado na hora.',
+      feats: ['Resumo visual antes do envio','Envio imediato via WhatsApp','Opção de adicionar mais produtos','Confirmação de entrega ao médico'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Confirmar Envio</div><div style="width:20px;"></div></div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:12px;">Passo 3 de 3 · Revise antes de enviar</div>
+          <div class="ph-card" style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+              <div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:2px;">PACIENTE</div><div style="font-size:14px;font-weight:600;color:white;">Maria Oliveira</div><div style="font-size:11px;color:rgba(255,255,255,0.3);">(11) 99999-1234</div></div>
+              <div style="background:rgba(74,124,111,0.2);border-radius:8px;padding:6px 10px;text-align:center;"><div style="font-size:9px;color:var(--sage-light);font-weight:600;">ENVIANDO POR</div><div style="font-size:12px;color:var(--sage-light);font-weight:700;">WhatsApp</div></div>
+            </div>
+            <div style="background:rgba(74,124,111,0.1);border-radius:10px;padding:12px;border:1.5px solid var(--sage);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:18px;">💊</span><div><div style="font-size:13px;font-weight:700;color:var(--sage-light);">Minoxidil 5% — Kirkland</div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Uso tópico · 60ml</div></div></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px;">
+                <div style="background:rgba(74,124,111,0.15);border-radius:7px;padding:6px 8px;"><span style="color:rgba(255,255,255,0.3);font-size:9px;">FREQUÊNCIA</span><br><strong style="color:var(--sage-light);font-size:11px;">2x ao dia</strong></div>
+                <div style="background:rgba(74,124,111,0.15);border-radius:7px;padding:6px 8px;"><span style="color:rgba(255,255,255,0.3);font-size:9px;">DURAÇÃO</span><br><strong style="color:var(--sage-light);font-size:11px;">3 meses</strong></div>
+              </div>
+              <div style="background:rgba(193,127,62,0.1);border-radius:7px;padding:7px 9px;font-size:10px;color:rgba(255,255,255,0.4);">📝 Evitar molhar por 4h após aplicação</div>
+            </div>
+          </div>
+          <button class="ph-btn ph-btn-primary">📤 Enviar para Maria agora</button>
+          <div style="text-align:center;font-size:11px;color:var(--sage-light);margin-top:10px;cursor:pointer;">+ Adicionar outro produto</div>
+        </div>`
+    },
+    {
+      tag: 'MÉDICO · TELA 4',
+      title: 'Analytics — taxa de conversão',
+      desc: 'O médico vê com clareza quais produtos têm maior aderência e onde estão os gargalos.',
+      feats: ['Taxa de conversão por produto','Ranking dos produtos mais recomendados','Motivos de não compra dos pacientes','Evolução mês a mês'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Analytics</div><div style="width:20px;"></div></div>
+          <div class="section-label">Janeiro 2025</div>
+          <div class="stat-row" style="margin-bottom:14px;">
+            <div class="stat-card"><div class="stat-num">68%</div><div class="stat-label">Taxa geral conversão</div></div>
+            <div class="stat-card"><div class="stat-num">R$8.2k</div><div class="stat-label">GMV gerado</div></div>
+          </div>
+          <div class="section-label">Produtos com maior aderência</div>
+          <div class="anal-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div style="font-size:12px;font-weight:600;color:white;">Minoxidil 5% Kirkland</div>
+              <span class="badge badge-green">82%</span>
+            </div>
+            <div class="pb-track"><div class="pb-fill" style="width:82%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">18 recomendações · 15 compraram</div>
+          </div>
+          <div class="anal-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div style="font-size:12px;font-weight:600;color:white;">Vitamina C 1000mg</div>
+              <span class="badge badge-blue">71%</span>
+            </div>
+            <div class="pb-track"><div class="pb-fill" style="width:71%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">14 recomendações · 10 compraram</div>
+          </div>
+          <div class="anal-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div style="font-size:12px;font-weight:600;color:white;">Protetor Solar FPS 70</div>
+              <span class="badge badge-warn">50%</span>
+            </div>
+            <div class="pb-track"><div class="pb-fill" style="width:50%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">10 recomendações · 5 compraram</div>
+          </div>
+          <div class="section-label" style="margin-top:4px;">Principal motivo de não compra</div>
+          <div class="ph-card" style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">💰</span>
+            <div><div class="ph-card-name">Preço alto — 60% dos casos</div><div class="ph-card-detail">Considere sugerir alternativas mais baratas</div></div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'MÉDICO · TELA 5',
+      title: 'Perfil do paciente individual',
+      desc: 'Histórico completo de um paciente específico. O médico vê todo o histórico de tratamentos.',
+      feats: ['Histórico completo de todos os tratamentos','Status atual de cada tratamento','Taxa de aderência individual','Botão de nova recomendação direto'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Perfil do Paciente</div><div style="width:20px;"></div></div>
+          <div style="text-align:center;padding:12px 0 16px;">
+            <div style="width:52px;height:52px;background:rgba(74,124,111,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 8px;">👤</div>
+            <div style="font-size:15px;font-weight:600;color:white;">Maria Oliveira</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);">(11) 99999-1234</div>
+            <div style="display:flex;gap:6px;justify-content:center;margin-top:8px;">
+              <span class="badge badge-sage">3 tratamentos</span>
+              <span class="badge badge-green">68% aderência</span>
+            </div>
+          </div>
+          <button class="ph-btn ph-btn-primary" style="margin-bottom:14px;">+ Nova Recomendação para Maria</button>
+          <div class="section-label">Tratamentos</div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><div style="font-size:12px;font-weight:600;color:white;">Minoxidil 5% Kirkland</div><span class="badge badge-warn">Não iniciou</span></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">Enviado hoje · 3 meses · 2x ao dia</div>
+          </div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><div style="font-size:12px;font-weight:600;color:white;">Vitamina C 1000mg</div><span class="badge badge-green">Concluído ✓</span></div>
+            <div class="pb-track" style="margin-bottom:4px;"><div class="pb-fill" style="width:100%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">nov 2024 · 60 dias completos</div>
+          </div>
+          <div class="ph-card">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><div style="font-size:12px;font-weight:600;color:white;">Protetor Solar FPS 70</div><span class="badge badge-green">Concluído ✓</span></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">out 2024 · 30 dias completos</div>
+          </div>
+        </div>`
+    }
+  ],
+  paciente: [
+    {
+      tag: 'PACIENTE · TELA 1',
+      title: 'Home — tratamentos ativos',
+      desc: 'Visão geral dos tratamentos em andamento. Barra de progresso, recompra pendente e histórico.',
+      feats: ['Tratamentos ativos com progresso visual','Banner de recompra em destaque','Histórico completo acessível','Notificações de lembrete'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-logo">prescreve<span>.</span></div><div class="ph-avatar">🙋</div></div>
+          <div class="ph-title">Olá, Maria 👋</div>
+          <div class="ph-sub">Você tem 1 tratamento ativo</div>
+          <div class="reorder-banner">
+            <div class="reorder-title">⏰ Hora de renovar!</div>
+            <div class="reorder-sub">Seu Minoxidil está acabando.<br>Faltam 5 dias para terminar o frasco.</div>
+            <div class="reorder-btn">Comprar agora →</div>
+          </div>
+          <div class="section-label">Tratamento ativo</div>
+          <div class="ph-card" style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <div style="font-size:12px;font-weight:600;color:white;">💊 Minoxidil 5% — Kirkland</div>
+              <span class="badge badge-sage">Ativo</span>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;">Dra. Camila Souza · 2x ao dia</div>
+            <div class="pb-label"><span>Dia 25</span><span>de 90</span></div>
+            <div class="pb-track"><div class="pb-fill" style="width:28%;"></div></div>
+            <div style="display:flex;gap:4px;margin-top:4px;"><span class="tag tag-sage">2x ao dia</span><span class="tag tag-accent">3 meses</span></div>
+          </div>
+          <div class="section-label">Histórico</div>
+          <div class="hist-item"><div class="hist-icon">☀️</div><div style="flex:1;"><div class="hist-name">Protetor Solar FPS 70</div><div class="hist-detail">Dra. Camila · nov 2024</div></div><span class="badge badge-green">✓</span></div>
+          <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Vitamina D 2000UI</div><div class="hist-detail">Dr. Paulo · out 2024</div></div><span class="badge badge-green">✓</span></div>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 2',
+      title: 'Recebe no WhatsApp',
+      desc: 'Quando o médico usa o app, o paciente recebe o link direto no WhatsApp. Sem baixar nada — abre no navegador.',
+      feats: ['Zero download necessário','Funciona em qualquer celular','Link seguro e protegido','Acessível a qualquer momento'],
+      render: () => `
+        <div class="phone-scroll" style="padding:0;">
+          <div style="background:#075e54;padding:12px 14px;display:flex;align-items:center;gap:9px;">
+            <span style="color:white;font-size:16px;margin-right:4px;">←</span>
+            <div style="width:32px;height:32px;background:var(--sage-pale);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;">💊</div>
+            <div><div style="font-size:13px;font-weight:600;color:white;">prescreve.</div><div style="font-size:10px;color:rgba(255,255,255,0.7);">online agora</div></div>
+          </div>
+          <div style="background:#e5ddd5;padding:14px 12px;min-height:490px;">
+            <div style="text-align:center;font-size:9px;color:#888;margin-bottom:12px;background:rgba(255,255,255,0.5);border-radius:100px;padding:3px 10px;display:inline-block;">Hoje · 14h32</div>
+            <div style="background:white;border-radius:2px 12px 12px 12px;padding:12px;max-width:90%;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+              <div style="font-size:12px;color:#1a1a1a;line-height:1.6;margin-bottom:10px;">Olá, Maria! 👋<br><br>A <strong>Dra. Camila Souza</strong> acabou de enviar uma recomendação de produto para você.</div>
+              <div style="background:var(--sage-pale);border-radius:8px;padding:10px;border-left:3px solid var(--sage);margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:700;color:var(--sage);margin-bottom:3px;">💊 Minoxidil 5% — Kirkland</div>
+                <div style="font-size:10px;color:var(--mid);line-height:1.5;"><strong>Frequência:</strong> 2x ao dia<br><strong>Duração:</strong> 3 meses<br><strong>Obs:</strong> Evitar molhar por 4h</div>
+              </div>
+              <div style="background:var(--sage);color:white;padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;">🛒 Ver opções e comprar →</div>
+              <div style="font-size:9px;color:var(--light);text-align:right;margin-top:4px;">14:32 ✓✓</div>
+            </div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 3',
+      title: 'Escanear receita em papel',
+      desc: 'O médico entregou papel? O paciente escaneia pelo app. A IA lê o produto e oferece comprar na hora ou salvar com lembrete.',
+      feats: ['Câmera nativa do app','IA extrai produto, dosagem e instruções','Comprar agora ou salvar com lembrete','Médico não precisa mudar nada na rotina'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Escanear Receita</div><div style="width:20px;"></div></div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:12px;line-height:1.5;">Aponte a câmera para o papel que o médico entregou. A IA lê e organiza tudo automaticamente.</div>
+          <div class="scan-area" style="margin-bottom:12px;">
+            <div class="scan-overlay"></div>
+            <div class="scan-frame">
+              <div class="scan-corner sc-tl"></div>
+              <div class="scan-corner sc-tr"></div>
+              <div class="scan-corner sc-bl"></div>
+              <div class="scan-corner sc-br"></div>
+              <div class="scan-line"></div>
+            </div>
+          </div>
+          <div style="background:rgba(74,124,111,0.12);border-radius:12px;padding:12px;border:1.5px solid var(--sage);margin-bottom:12px;">
+            <div style="font-size:9px;color:var(--sage-light);font-weight:700;letter-spacing:1px;margin-bottom:6px;">✓ LIDO PELA IA — CONFIRME</div>
+            <div style="font-size:13px;font-weight:700;color:white;margin-bottom:3px;">💊 Minoxidil 5% — uso tópico</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);line-height:1.6;">Frequência: 2x ao dia<br>Duração: 3 meses<br>Obs: Evitar molhar por 4h após aplicação</div>
+          </div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);text-align:center;margin-bottom:10px;">O que você quer fazer?</div>
+          <button class="ph-btn ph-btn-accent" style="margin-top:0;">🛒 Comprar agora</button>
+          <button class="ph-btn ph-btn-secondary" style="margin-top:8px;">🔔 Salvar e me lembrar depois</button>
+          <button class="ph-btn ph-btn-ghost" style="margin-top:6px;font-size:11px;">Escanear novamente</button>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 2b',
+      title: 'Salvar com lembrete',
+      desc: 'Paciente salvou a recomendação. Escolhe quando quer ser lembrado para comprar. Instruções ficam acessíveis.',
+      feats: ['Recomendação salva no histórico','Escolha de quando receber o lembrete','Instruções de uso sempre acessíveis','Notificação push no horário escolhido'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Salvo!</div><div style="width:20px;"></div></div>
+          <div style="text-align:center;padding:8px 0 16px;">
+            <div style="width:52px;height:52px;background:rgba(74,124,111,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px;">✅</div>
+            <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:white;margin-bottom:4px;">Recomendação salva!</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);">Minoxidil 5% · Dra. Camila Souza</div>
+          </div>
+          <div class="ph-card" style="margin-bottom:12px;">
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;">📋 INSTRUÇÕES DE USO</div>
+            <div style="font-size:12px;color:white;line-height:1.7;">Aplicar <strong>1ml</strong> no couro cabeludo<br><strong>2x ao dia</strong> — manhã e noite<br>Evitar molhar por <strong>4 horas</strong> após</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Quando posso te lembrar de comprar?</div>
+          <div class="ph-card" style="border:1.5px solid var(--sage);background:rgba(74,124,111,0.12);margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px;">🌅</span>
+            <div><div style="font-size:12px;font-weight:600;color:var(--sage-light);">Amanhã de manhã</div><div style="font-size:10px;color:rgba(255,255,255,0.3);">às 9h00</div></div>
+          </div>
+          <div class="ph-card" style="margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px;">📅</span>
+            <div><div style="font-size:12px;font-weight:500;color:white;">Em 3 dias</div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Sex, 09h00</div></div>
+          </div>
+          <div class="ph-card" style="margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:16px;">⚙️</span>
+            <div><div style="font-size:12px;font-weight:500;color:white;">Escolher data e hora</div></div>
+          </div>
+          <button class="ph-btn ph-btn-primary">Definir lembrete</button>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 3',
+      title: 'Notificação push',
+      desc: 'O app envia notificações no momento certo — hora de tomar, hora de recomprar. Sem spam.',
+      feats: ['Notificação de lembrete de uso','Notificação de recompra no prazo','Toque suave, sem invasão','Configurável pelo paciente'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div style="padding:12px 0;margin-bottom:8px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-bottom:12px;">Hoje, 09:00</div>
+            <div class="notif-banner">
+              <div class="notif-icon">💊</div>
+              <div style="flex:1;">
+                <div class="notif-app">PRESCREVE.</div>
+                <div class="notif-text"><strong>Hora do Minoxidil!</strong><br>Aplique 1ml no couro cabeludo agora</div>
+              </div>
+              <div class="notif-time">agora</div>
+            </div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin:16px 0 12px;">Ontem, 08:30</div>
+            <div class="notif-banner">
+              <div class="notif-icon">🛒</div>
+              <div style="flex:1;">
+                <div class="notif-app">PRESCREVE.</div>
+                <div class="notif-text"><strong>Seu Minoxidil está acabando!</strong><br>Compre agora para não interromper o tratamento</div>
+              </div>
+              <div class="notif-time">ontem</div>
+            </div>
+            <div class="notif-banner" style="opacity:0.5;">
+              <div class="notif-icon">⭐</div>
+              <div style="flex:1;">
+                <div class="notif-app">PRESCREVE.</div>
+                <div class="notif-text">Parabéns! Você completou 30 dias de tratamento com Minoxidil 🎉</div>
+              </div>
+              <div class="notif-time">15 jan</div>
+            </div>
+          </div>
+          <div class="ph-card" style="text-align:center;padding:16px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Notificações enviadas sempre terça a quinta,<br>nunca em fins de semana</div>
+            <button class="ph-btn ph-btn-secondary" style="margin-top:0;">Configurar lembretes</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 3',
+      title: 'Produto recomendado + compra',
+      desc: 'Marca do médico em destaque. Alternativas por preço. Compra com 1 clique direcionada para farmácia parceira.',
+      feats: ['Produto recomendado com selo visual','Alternativas ordenadas por preço','Link direto para farmácia parceira','Também disponível: já comprei / lembrar depois'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Recomendação</div><div style="width:20px;"></div></div>
+          <div style="margin-bottom:14px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">Dra. Camila Souza · hoje</div>
+            <div style="font-size:16px;font-weight:600;color:white;font-family:'Fraunces',serif;">Minoxidil 5%</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">2x ao dia · 3 meses · Evitar molhar 4h</div>
+          </div>
+          <div class="section-label">Recomendado pelo médico</div>
+          <div class="option-card rec">
+            <div class="option-img">🧴</div>
+            <div style="flex:1;">
+              <div><span class="badge badge-sage" style="margin-bottom:4px;display:inline-block;">✓ Recomendado</span></div>
+              <div class="option-name">Kirkland Minoxidil 5%</div>
+              <div class="option-brand">60ml · Uso tópico</div>
+              <div class="option-price">R$ 74,90</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin:10px 0 8px;"><div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div><span style="font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:0.8px;">OUTRAS OPÇÕES</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.06);"></div></div>
+          <div class="option-card"><div class="option-img">🧴</div><div style="flex:1;"><div class="option-name">Regaine Minoxidil 5%</div><div class="option-brand">60ml</div><div class="option-price">R$ 89,90</div></div></div>
+          <div class="option-card"><div class="option-img">🧴</div><div style="flex:1;"><div class="option-name">Minoxidil 5% Genérico</div><div class="option-brand">60ml</div><div class="option-price">R$ 52,00</div></div></div>
+          <button class="ph-btn ph-btn-primary" style="margin-top:8px;">Comprar Kirkland · R$74,90</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <button class="ph-btn ph-btn-secondary" style="margin-top:0;font-size:11px;padding:10px;">🏪 Já comprei</button>
+            <button class="ph-btn ph-btn-ghost" style="margin-top:0;font-size:11px;padding:10px;">🔔 Lembrar depois</button>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 4',
+      title: 'Não vai comprar — por quê?',
+      desc: 'Antes de parar os lembretes, coleta o motivo. Dado valioso para o médico e para o produto.',
+      feats: ['Pergunta rápida e não invasiva','4 opções de motivo','Para lembretes imediatamente','Dado enviado ao médico anonimamente'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="width:20px;"></div></div>
+          <div class="ph-title" style="margin-bottom:4px;margin-top:8px;">Pode nos contar<br>o motivo?</div>
+          <div class="ph-sub" style="margin-bottom:18px;">Leva 5 segundos e ajuda a Dra. Camila</div>
+          <div class="why-option sel">
+            <div class="why-icon">💰</div>
+            <div><div class="why-text">Preço muito alto</div><div class="why-sub">Ver alternativas mais baratas</div></div>
+          </div>
+          <div class="why-option">
+            <div class="why-icon">📦</div>
+            <div><div class="why-text">Já tenho em casa</div><div class="why-sub">Vou usar o que tenho</div></div>
+          </div>
+          <div class="why-option">
+            <div class="why-icon">💊</div>
+            <div><div class="why-text">Não preciso mais</div><div class="why-sub">Tratamento cancelado</div></div>
+          </div>
+          <div class="why-option">
+            <div class="why-icon">🤐</div>
+            <div><div class="why-text">Prefiro não dizer</div></div>
+          </div>
+          <button class="ph-btn ph-btn-primary" style="margin-top:14px;">Enviar e parar lembretes</button>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 5',
+      title: 'Configurações de notificação',
+      desc: 'O paciente controla quando e como quer ser lembrado. Respeito total à sua preferência.',
+      feats: ['Ativa/desativa por tipo de notificação','Escolhe horário preferido','Nunca envia em fins de semana','Fácil de ajustar a qualquer momento'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Notificações</div><div style="width:20px;"></div></div>
+          <div class="ph-sub" style="margin-bottom:16px;">Controle quando e como quer ser lembrado</div>
+          <div class="section-label">Lembretes de recompra</div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div class="ph-card-name">Lembrete de recompra</div><div class="ph-card-detail">Quando o estoque está acabando</div></div>
+              <div style="width:40px;height:22px;background:var(--sage);border-radius:11px;position:relative;"><div style="width:18px;height:18px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;"></div></div>
+            </div>
+          </div>
+          <div class="ph-card" style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div class="ph-card-name">Horário preferido</div><div class="ph-card-detail">Terça a quinta, às 9h00</div></div>
+              <div style="font-size:11px;color:var(--sage-light);">Editar</div>
+            </div>
+          </div>
+          <div class="section-label">Lembretes de dose</div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div><div class="ph-card-name">Lembrete de aplicação</div><div class="ph-card-detail">2x ao dia — 8h e 20h</div></div>
+              <div style="width:40px;height:22px;background:rgba(255,255,255,0.1);border-radius:11px;position:relative;"><div style="width:18px;height:18px;background:rgba(255,255,255,0.3);border-radius:50%;position:absolute;top:2px;left:2px;"></div></div>
+            </div>
+          </div>
+          <div style="background:rgba(74,124,111,0.08);border-radius:10px;padding:10px 12px;font-size:10px;color:rgba(255,255,255,0.3);line-height:1.6;margin-top:8px;">
+            📅 Nunca enviamos notificações em sextas-feiras, sábados ou domingos. Estudos mostram menor aderência nesses dias.
+          </div>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 6',
+      title: 'Histórico completo de tratamentos',
+      desc: 'Todo o histórico médico organizado em um lugar. Tratamentos anteriores, durações, médicos e status.',
+      feats: ['Todos os tratamentos em ordem cronológica','Médico responsável por cada um','Status de conclusão','Acesso rápido às instruções de uso'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Histórico</div><div style="width:20px;"></div></div>
+          <div class="section-label">Ativos</div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><div style="font-size:12px;font-weight:600;color:white;">💊 Minoxidil 5%</div><span class="badge badge-sage">Ativo — Dia 25/90</span></div>
+            <div class="pb-track" style="margin-bottom:6px;"><div class="pb-fill" style="width:28%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">Dra. Camila Souza · jan 2025 · 3 meses</div>
+          </div>
+          <div class="section-label" style="margin-top:8px;">Concluídos</div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:12px;font-weight:600;color:white;">☀️ Protetor FPS 70</div><span class="badge badge-green">Concluído ✓</span></div>
+            <div class="pb-track" style="margin-bottom:4px;"><div class="pb-fill" style="width:100%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">Dra. Camila · nov 2024 · 30 dias</div>
+          </div>
+          <div class="ph-card" style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:12px;font-weight:600;color:white;">💊 Vitamina D 2000UI</div><span class="badge badge-green">Concluído ✓</span></div>
+            <div class="pb-track" style="margin-bottom:4px;"><div class="pb-fill" style="width:100%;"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">Dr. Paulo Lima · out 2024 · 60 dias</div>
+          </div>
+          <div class="ph-card">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="font-size:12px;font-weight:600;color:white;">🌿 Colágeno Verisol</div><span class="badge badge-orange">Abandonado</span></div>
+            <div class="pb-track" style="margin-bottom:4px;"><div class="pb-fill" style="width:40%;background:rgba(193,127,62,0.5);"></div></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);">Dra. Camila · set 2024 · parou no dia 36</div>
+          </div>
+        </div>`
+    },
+    {
+      tag: 'PACIENTE · TELA 7',
+      title: 'Perfil e configurações',
+      desc: 'Configurações do paciente. Dados pessoais, preferências de notificação e privacidade.',
+      feats: ['Dados pessoais editáveis','Gerenciar notificações','Médicos vinculados','Exportar histórico de tratamentos'],
+      render: () => `
+        <div class="phone-scroll">
+          <div class="ph-status-bar"><span>9:41</span><span>●●● 🔋</span></div>
+          <div class="ph-header"><div class="ph-back">←</div><div style="font-size:13px;font-weight:600;color:white;">Meu Perfil</div><div style="width:20px;"></div></div>
+          <div style="text-align:center;padding:12px 0 20px;">
+            <div style="width:56px;height:56px;background:rgba(74,124,111,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px;">🙋</div>
+            <div style="font-size:15px;font-weight:600;color:white;">Maria Oliveira</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);">(11) 99999-1234</div>
+          </div>
+          <div class="section-label">Minha saúde</div>
+          <div class="hist-item"><div class="hist-icon">💊</div><div style="flex:1;"><div class="hist-name">Tratamentos</div><div class="hist-detail">3 tratamentos · 1 ativo</div></div><div style="font-size:12px;color:rgba(255,255,255,0.3);">›</div></div>
+          <div class="hist-item"><div class="hist-icon">👩‍⚕️</div><div style="flex:1;"><div class="hist-name">Meus médicos</div><div class="hist-detail">Dra. Camila · Dr. Paulo</div></div><div style="font-size:12px;color:rgba(255,255,255,0.3);">›</div></div>
+          <div class="hist-item"><div class="hist-icon">📊</div><div style="flex:1;"><div class="hist-name">Exportar histórico</div><div class="hist-detail">PDF com todos os tratamentos</div></div><div style="font-size:12px;color:rgba(255,255,255,0.3);">›</div></div>
+          <div class="section-label" style="margin-top:8px;">Preferências</div>
+          <div class="hist-item"><div class="hist-icon">🔔</div><div style="flex:1;"><div class="hist-name">Notificações</div><div class="hist-detail">Seg a qui, 9h00</div></div><div style="font-size:12px;color:rgba(255,255,255,0.3);">›</div></div>
+          <div class="hist-item" style="border-bottom:none;"><div class="hist-icon">🔒</div><div style="flex:1;"><div class="hist-name">Privacidade</div><div class="hist-detail">Seus dados são protegidos</div></div><div style="font-size:12px;color:rgba(255,255,255,0.3);">›</div></div>
+        </div>`
+    }
+  ]
+};
+
+let section = 'onboard';
+let idx = 0;
+
+function setSection(s) {
+  section = s;
+  idx = 0;
+  document.querySelectorAll('.toggle-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['onboard','medico','paciente'][i] === s);
+  });
+  render();
+}
+
+function getScreens() { return allScreens[section]; }
+
+function render() {
+  const screens = getScreens();
+  const s = screens[idx];
+
+  document.getElementById('stepsEl').innerHTML = screens.map((sc,i) => `
+    <div class="step ${i===idx?'active':i<idx?'done':''}" onclick="goTo(${i})">
+      <div class="step-dot">${i<idx?'✓':i+1}</div>
+      <div class="step-label">${sc.tag.replace(' · ','\n')}</div>
+    </div>`).join('');
+
+  document.getElementById('navDots').innerHTML = screens.map((_,i) =>
+    `<div class="ndot ${i===idx?'active':''}" onclick="goTo(${i})"></div>`).join('');
+
+  document.getElementById('navCount').textContent = `${idx+1}/${screens.length}`;
+
+  const wrap = document.getElementById('screenWrap');
+  const mockup = `
+    <div class="phone">
+      <div class="phone-notch">
+        <div class="notch-camera"></div>
+        <div style="width:32px;height:6px;background:#1a1a1a;border-radius:3px;"></div>
+        <div class="notch-camera"></div>
+      </div>
+      ${s.render()}
+    </div>`;
+
+  wrap.innerHTML = `
+    <div class="screen active">
+      ${mockup}
+      <div class="info-panel">
+        <div class="screen-tag">${s.tag}</div>
+        <div class="screen-title">${s.title}</div>
+        <div class="screen-desc">${s.desc}</div>
+        <ul class="feat-list">${s.feats.map(f=>`<li class="feat-item"><div class="feat-check">✓</div>${f}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+}
+
+function goTo(i) { idx = i; render(); }
+function next() { const s = getScreens(); if(idx < s.length-1) { idx++; render(); } }
+function prev() { if(idx > 0) { idx--; render(); } }
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') next();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prev();
+});
+
+render();
+</script>
+</body>
+</html>
